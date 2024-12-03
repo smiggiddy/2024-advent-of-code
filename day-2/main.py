@@ -44,13 +44,13 @@ def main():
         if level_safe(l):
             safe_levels += 1
         # for part two
-        else:
-            for i in range(len(l)):
-                temp = l.copy()
-                temp.pop(i)
-                if level_safe(temp):
-                    safe_levels += 1
-                    break
+        # else:
+        #     for i in range(len(l)):
+        #         temp = l.copy()
+        #         temp.pop(i)
+        #         if level_safe(temp):
+        #             safe_levels += 1
+        #             break
     print(safe_levels)
 
 

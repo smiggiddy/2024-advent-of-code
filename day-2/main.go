@@ -2,37 +2,95 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 
 	"git.thecodedom.com/aoc2024/tools"
 )
 
-func createSlices(data []byte) string {
+type intSlice struct {
+	number []int
+}
+
+func createSlices(data []byte) []intSlice {
 
 	test := string(data)
 	split := strings.Split(test, "\n")
 
-	var numbers []int
+	var numbers []intSlice
 
-	newSplit := make([][]int, 0)
 	for _, num := range split {
-		fmt.Println(num)
 		if num != "" {
-			numbers = append([], strconv.Itoa(strings.Split(num, " ")))
-			newSplit = append(newSplit, strings.Split(num, " "))
+
+			var ints []int
+			s := strings.Split(num, " ")
+			for _, n := range s {
+				t, err := strconv.Atoi(n)
+				if err != nil {
+					panic(err)
+				}
+				ints = append(ints, t)
+			}
+			numbers = append(numbers, intSlice{number: ints})
+
 		}
 
 	}
-	lines := string(data)
 
-	fmt.Println(newSplit)
+	return numbers
+}
 
-	return lines
+func (i intSlice) levelSafe() bool {
+	var increasing bool = true
+
+	currentLevel, temp := i.number[0], i.number[1:]
+	i.number = temp
+
+	if currentLevel > i.number[0] {
+		increasing = false
+	}
+
+	for len(i.number) > 0 {
+		difference := 0
+
+		if increasing == true {
+			if currentLevel > i.number[0] {
+				return false
+			}
+			difference = currentLevel - i.number[0]
+		} else {
+			if currentLevel < i.number[0] {
+				return false
+			}
+			difference = i.number[0] - currentLevel
+		}
+
+		if math.Abs(float64(difference)) == 0 || math.Abs(float64(difference)) > 3 {
+			return false
+		}
+
+		currentLevel, temp = i.number[0], i.number[1:]
+		i.number = temp
+
+	}
+	return true
+
 }
 
 func main() {
-	data := tools.LoadData("input_test.txt")
+	d := tools.LoadData("input.txt")
+	s := createSlices(d)
 
-	createSlices(data)
+	var totalSafe int = 0
+
+	for _, o := range s {
+		r := o.levelSafe()
+
+		if r {
+			totalSafe += 1
+		}
+	}
+
+	fmt.Println(totalSafe)
 }
