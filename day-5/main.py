@@ -1,6 +1,3 @@
-import functools
-
-
 def read_input(file):
     with open(file) as f:
         data = f.readlines()
@@ -19,15 +16,6 @@ def read_input(file):
         return rules, update
 
 
-def check_order(r, u):
-
-    if len(r) == 0:
-        return True
-
-    else:
-        pass
-
-
 def solve_one(r: dict, u: list):
 
     in_order = True
@@ -43,24 +31,10 @@ def solve_one(r: dict, u: list):
                 if len(sorted) == 0:
                     sorted.append(item)
                     continue
-                try:
-                    if item in r[str(sorted[(i - 1)])]:
-                        sorted.append(item)
-                        continue
-                except KeyError:
-                    stop_loop = False
-                    for visited in sorted:
-                        rule = r.get(str(visited))
-                        if rule:
-                            if item in rule:
-                                stop_loop = True
-                                break
-                    if stop_loop:
-                        in_order = False
-                        break
-                    else:
-                        sorted.append(item)
-                        continue
+                    # try:
+                if item in r[str(sorted[(i - 1)])]:
+                    sorted.append(item)
+                    continue
 
                 else:
                     current_item_rules = r.get(str(item))
@@ -114,15 +88,11 @@ def custom_sort_manual(update: list, rules: dict):
 
 def solve_two(update, rules):
     score = []
-    sorted = []
 
     for un in update:
-        # sorted.append((custom_sort(un, rules)))
         temp = custom_sort_manual(un, rules)
-        sorted.append(temp)
-    for up in sorted:
-        middle_index = int(len(up) / 2)
-        score.append(up[middle_index])
+        middle_index = int(len(temp) / 2)
+        score.append(temp[middle_index])
 
     solve_sum = sum([*map(int, score)])
 
@@ -130,7 +100,6 @@ def solve_two(update, rules):
 
 
 def main():
-
     # r, u = read_input("./test_input.txt")
     r, u = read_input("./input.txt")
     r.sort()
@@ -153,20 +122,3 @@ def main():
 
 
 main()
-# def custom_sort(update, rules):
-#
-#     def compare(a, b):
-#
-#         right_side = rules.get(a, "")
-#         left_side = rules.get(b, "")
-#
-#         if left_side:
-#             if right_side:
-#                 if a in left_side:
-#                     return 1
-#             elif a in left_side:
-#                 return 1
-#
-#         return -1
-#
-#     return sorted(update, key=functools.cmp_to_key(compare))
