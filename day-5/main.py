@@ -14,7 +14,7 @@ def read_input(file):
             else:
                 if l.strip() == "":
                     continue
-                update.append(l.strip().split(","))
+                update.append([*map(int, (l.strip().split(",")))])
 
         return rules, update
 
@@ -44,13 +44,13 @@ def solve_one(r: dict, u: list):
                     sorted.append(item)
                     continue
                 try:
-                    if item in r[sorted[(i - 1)]]:
+                    if item in r[str(sorted[(i - 1)])]:
                         sorted.append(item)
                         continue
                 except KeyError:
                     stop_loop = False
                     for visited in sorted:
-                        rule = r.get(visited)
+                        rule = r.get(str(visited))
                         if rule:
                             if item in rule:
                                 stop_loop = True
@@ -63,7 +63,7 @@ def solve_one(r: dict, u: list):
                         continue
 
                 else:
-                    current_item_rules = r.get(item)
+                    current_item_rules = r.get(str(item))
                     if current_item_rules:
                         stop_loop = False
                         for visited in sorted:
@@ -87,30 +87,29 @@ def solve_one(r: dict, u: list):
     return solve_sum, not_sorted
 
 
-def custom_sort(update, rules):
+def custom_sort_manual(update: list, rules: dict):
 
-    dep = [rules[item] for item in update if rules[item]]
+    finished_sorting = False
 
-    print(dep)
+    while not finished_sorting:
+        visisted = []
+        for i in range(len(update) - 1):
 
-    def compare(a, b):
+            right = rules.get(str(update[i + 1]), "")
 
-        right_side = rules.get(a, "")
-        left_side = rules.get(b, "")
+            if right:
+                if update[i] in right:
+                    temp = update[i]
+                    update[i] = update[i + 1]
+                    update[i + 1] = temp
+                else:
+                    visisted.append(update[i])
+            else:
+                visisted.append(update[i])
+        if len(visisted) == len(update) - 1:
+            finished_sorting = True
 
-        if left_side:
-            if right_side:
-                if a in left_side:
-                    print("made inside of rule a")
-                    return 1
-            elif a in left_side:
-                print("insider elif")
-                return 1
-
-        print("made it to the end")
-        return -1
-
-    return sorted(update, key=functools.cmp_to_key(compare))
+    return update
 
 
 def solve_two(update, rules):
@@ -118,10 +117,9 @@ def solve_two(update, rules):
     sorted = []
 
     for un in update:
-        print(un)
-        sorted.append((custom_sort(un, rules)))
-        print(sorted)
-
+        # sorted.append((custom_sort(un, rules)))
+        temp = custom_sort_manual(un, rules)
+        sorted.append(temp)
     for up in sorted:
         middle_index = int(len(up) / 2)
         score.append(up[middle_index])
@@ -133,8 +131,8 @@ def solve_two(update, rules):
 
 def main():
 
-    r, u = read_input("./test_input.txt")
-    # r, u = read_input("./input.txt")
+    # r, u = read_input("./test_input.txt")
+    r, u = read_input("./input.txt")
     r.sort()
     r = [i.split("|") for i in r]
 
@@ -145,7 +143,8 @@ def main():
         if not rules.get(k):
             rules[k] = [int(v)]
         else:
-            rules[k].append(v)
+            # rules[k].append(v)
+            rules[k].append(int(v))
 
     right_pages, not_sorted = solve_one(rules, u)
     print(right_pages)
@@ -154,3 +153,20 @@ def main():
 
 
 main()
+# def custom_sort(update, rules):
+#
+#     def compare(a, b):
+#
+#         right_side = rules.get(a, "")
+#         left_side = rules.get(b, "")
+#
+#         if left_side:
+#             if right_side:
+#                 if a in left_side:
+#                     return 1
+#             elif a in left_side:
+#                 return 1
+#
+#         return -1
+#
+#     return sorted(update, key=functools.cmp_to_key(compare))
