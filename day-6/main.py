@@ -1,4 +1,3 @@
-import copy
 from collections import deque
 
 
@@ -7,7 +6,7 @@ def load_data(file):
 
 
 def check_exit(pos, max):
-    return pos[0] == 0 or pos[0] == max[0] or pos[1] == max[1] or pos[1] == 0
+    return pos[0] in (0, max[0]) or pos[1] in (0, max[1])
 
 
 def visited_count(v, cord):
@@ -19,7 +18,7 @@ def visited_count(v, cord):
 
 
 def check_if_loop(v: dict):
-    return sum(1 for v in v.values() if v >= 4) >= 4
+    return sum(1 for v in v.values() if v >= 4) >= 2
 
 
 def bfs(maze: list, pos: tuple, ending: list):
@@ -70,17 +69,6 @@ def bfs(maze: list, pos: tuple, ending: list):
                     good_loop = True
                     break
 
-                else:
-                    temp_cords = []
-                    for item in turn_tracking:
-                        if turn_tracking[item] >= 10:
-                            temp_cords.append(item)
-                        if len(temp_cords) >= 2:
-                            break
-
-                    if len(temp_cords) == 2:
-                        good_loop = True
-                        break
             else:
                 queue.append(next_cell)
 
